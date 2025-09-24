@@ -15,7 +15,24 @@ npm install
    - Create a new Supabase project at [supabase.com](https://supabase.com)
    - Run the database migration: copy/paste [`apps/taskflow/supabase/migrations/001_tasks.sql`](./apps/taskflow/supabase/migrations/001_tasks.sql) in SQL Editor
    - Configure authentication: disable email confirmations for testing
-   - Add redirect URL: `http://localhost:3001/auth/callback`
+   - **Create OAuth client** using your Supabase project API:
+     
+     ```bash
+     curl --request POST \
+       --url https://<ref>.supabase.co/auth/v1/admin/oauth/clients \
+       --header 'Apikey: <ANON_KEY>' \
+       --header 'Authorization: Bearer <SERVICE_ROLE_KEY>' \
+       --header 'Content-Type: application/json' \
+       --data '{
+       "client_name": "FocusTime",
+       "redirect_uris": ["http://localhost:3001/auth/callback"],
+       "client_uri": "http://localhost:3001",
+       "grant_types": ["authorization_code", "refresh_token"],
+       "client_type": "public"
+     }'
+     ```
+     
+     **Important**: Save the `client_id` from the response - you'll need it for the FocusTime environment configuration.
 
 3. **Configure environment variables**:
 ```bash
@@ -24,6 +41,8 @@ cp apps/taskflow/.env.example apps/taskflow/.env.local
 
 # FocusTime (OAuth Client) - copy and edit  
 cp apps/focustime/.env.example apps/focustime/.env.local
+
+# Update VITE_OAUTH_CLIENT_ID with the client_id from step 2
 ```
 
 4. **Start both applications**:
@@ -156,8 +175,8 @@ Full Supabase access - OAuth Provider needs complete access:
 
 ```env
 # Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co
-NEXT_PUBLIC_SUPABASE_ANON_KEY=your_supabase_anon_key
+NEXT_PUBLIC_SUPABASE_URL=https://<ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon_key>
 
 # App Configuration
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
@@ -170,12 +189,14 @@ OAuth Client configuration with TaskFlow integration:
 # TaskFlow OAuth Configuration
 VITE_TASKFLOW_URL=http://localhost:3000
 VITE_TASKFLOW_API_URL=http://localhost:3000/api
-VITE_OAUTH_CLIENT_ID=037610c0-6f9a-4242-bdc3-3e3966b4a49b
-VITE_TASKFLOW_SUPABASE_AUTH_URL=https://your-project.supabase.co/auth/v1
+VITE_OAUTH_CLIENT_ID=<client_id_from_oauth_client_creation>
+VITE_TASKFLOW_SUPABASE_AUTH_URL=https://<ref>.supabase.co/auth/v1
 
 # App Configuration
 VITE_SITE_URL=http://localhost:3001
 ```
+
+> **Important**: Replace `<client_id_from_oauth_client_creation>` with the actual `client_id` returned from the OAuth client creation API call in the Supabase setup step, and `<ref>` with your Supabase project reference.
 
 > **Security Note**: FocusTime uses the specific Supabase Auth URL for OAuth token exchange rather than direct Supabase client access.
 

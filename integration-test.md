@@ -34,7 +34,6 @@ This comprehensive checklist ensures the complete OAuth 2.1 flow works correctly
   - [ ] Can edit task titles and descriptions
   - [ ] Can mark tasks as complete/incomplete
   - [ ] Can delete tasks
-  - [ ] Changes are reflected in real-time
 - [ ] **Verify task persistence**:
   - [ ] Refresh page - tasks remain
   - [ ] Logout and login - tasks remain
@@ -51,10 +50,6 @@ This comprehensive checklist ensures the complete OAuth 2.1 flow works correctly
 ### TaskFlow Consent Screen
 - [ ] **Review OAuth consent page**:
   - [ ] Page shows "FocusTime" as the requesting application
-  - [ ] Requested permissions are clearly listed:
-    - [ ] "Read your profile information"
-    - [ ] "Read your tasks" 
-    - [ ] "Update task completion status"
   - [ ] User email is displayed correctly
   - [ ] "Authorize" and "Deny" buttons are present
 - [ ] **Test denial flow** (optional):
@@ -71,8 +66,7 @@ This comprehensive checklist ensures the complete OAuth 2.1 flow works correctly
 ### FocusTime OAuth Callback
 - [ ] **Verify successful authentication**:
   - [ ] "Authentication Successful" message appears
-  - [ ] Success toast notification appears
-  - [ ] Automatic redirect to timer page after 2 seconds
+  - [ ] Automatic redirect to timer page
   - [ ] Header shows user is logged in (user avatar/email visible)
 
 ## Phase 3: Task Integration Verification
@@ -86,7 +80,6 @@ This comprehensive checklist ensures the complete OAuth 2.1 flow works correctly
 
 ### Task Selection & Timer
 - [ ] **Select first task**: "Review project documentation"
-  - [ ] Success toast: "🎯 Task selected!" appears
   - [ ] Selected task confirmation shows below dropdown
   - [ ] Timer display shows task name
 - [ ] **Test timer functionality**:
@@ -130,19 +123,6 @@ This comprehensive checklist ensures the complete OAuth 2.1 flow works correctly
   - [ ] Second task is now marked complete
   - [ ] First task remains complete
   - [ ] Third task remains incomplete
-
-### Test Edge Cases
-- [ ] **Test "No specific task" option**:
-  - [ ] Select "No specific task" from dropdown
-  - [ ] Start and complete focus session
-  - [ ] Verify modal shows "free focus session" message
-  - [ ] No task completion option is offered
-
-- [ ] **Test "Keep Working" option**:
-  - [ ] Select third task and complete focus session
-  - [ ] Click "Keep Working" instead of "Mark as Complete"
-  - [ ] Verify new focus session starts with same task
-  - [ ] Verify task remains incomplete in TaskFlow
 
 ## Phase 5: Authentication & Security
 
@@ -194,63 +174,15 @@ This comprehensive checklist ensures the complete OAuth 2.1 flow works correctly
   - [ ] Try to use FocusTime
   - [ ] Verify appropriate error messages and recovery options
 
-## Phase 7: Mobile & Responsive Testing
-
-### Mobile Browser Testing
-- [ ] **Test on mobile device or DevTools mobile view**:
-  - [ ] OAuth flow works on mobile browsers
-  - [ ] Touch-friendly button sizes
-  - [ ] Timer display is readable on small screens
-  - [ ] Task selection dropdown works on mobile
-  - [ ] Toast notifications display correctly
-
-### Cross-Browser Testing
-- [ ] **Test in different browsers**:
-  - [ ] Chrome/Chromium
-  - [ ] Firefox
-  - [ ] Safari (if available)
-  - [ ] Edge (if available)
-
-## Final Verification Checklist
-
-### Complete Flow Test
-- [ ] **Full end-to-end flow** (fresh browser session):
-  1. [ ] Register new user in TaskFlow
-  2. [ ] Create 2-3 tasks
-  3. [ ] Go to FocusTime and authorize OAuth
-  4. [ ] Select task and complete focus session
-  5. [ ] Mark task complete
-  6. [ ] Verify completion in TaskFlow
-  7. [ ] Logout from FocusTime
-  8. [ ] Login again - tasks still synced
-
-### Performance & UX
-- [ ] **User experience verification**:
-  - [ ] OAuth flow feels smooth and professional
-  - [ ] Loading states provide clear feedback
-  - [ ] Error messages are helpful and actionable
-  - [ ] Success notifications provide positive feedback
-  - [ ] UI is responsive and professional-looking
-
 ## Troubleshooting Common Issues
 
 If any test fails, check:
 
 1. **Environment variables** are set correctly in both apps
-2. **Supabase redirect URLs** match exactly (no trailing slashes)
-3. **Both servers are running** on correct ports
-4. **Database migrations** have been applied
-5. **Browser console** for JavaScript errors
-6. **Network tab** for failed API requests
-7. **Supabase dashboard** for authentication logs
-
-## Success Criteria
-
-✅ All checklist items pass
-✅ OAuth flow is secure and follows OAuth 2.1 best practices
-✅ Task synchronization works bidirectionally
-✅ Error handling provides good user experience
-✅ Mobile experience is fully functional
-✅ Performance is acceptable across all operations
-
-**When all items are checked, the OAuth 2.1 integration is working correctly!** 🎉
+2. **Supabase project configured correctly to enable OAuth2.1 server** no ui for now, need to be done manually by Supabase team.
+3. **Supabase redirect URLs** match exactly (no trailing slashes)
+4. **Both servers are running** on correct ports
+5. **Database migrations** have been applied
+6. **Browser console** for JavaScript errors
+7. **Network tab** for failed API requests
+8. **Supabase dashboard** for authentication logs

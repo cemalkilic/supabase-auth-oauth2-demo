@@ -2,6 +2,13 @@
 
 A complete Supabase OAuth 2.1 implementation demonstrating secure authorization between a task management app (TaskFlow) and a Pomodoro timer app (FocusTime).
 
+## 🎥 Demo Video
+
+<video width="100%" controls>
+  <source src="./demo/supabase_oauth2_demo.mp4" type="video/mp4">
+  Your browser does not support the video tag. <a href="./demo/supabase_oauth2_demo.mp4">Download the demo video</a>
+</video>
+
 ## 🚨 **DEMO ONLY - NOT FOR PRODUCTION** 🚨
 
 **⚠️ WARNING: This repository is for demonstration and learning purposes only!**

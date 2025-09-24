@@ -12,8 +12,8 @@ cp .env.example .env.local
 Edit `.env.local` with your Supabase credentials:
 ```env
 # Supabase Configuration
-NEXT_PUBLIC_SUPABASE_URL=https://dcadjrdcyeuocwxbjeux.supabase.red
-NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImRjYWRqcmRjeWV1b2N3eGJqZXV4Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTMwOTY4NzQsImV4cCI6MjA2ODY3Mjg3NH0.4N5NpEXb03_LNOZYpVDmG2Ul0Gohu02jVmj4svXqBy4
+NEXT_PUBLIC_SUPABASE_URL=https://<ref>.supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=<anon_key>
 
 # App Configuration
 NEXT_PUBLIC_SITE_URL=http://localhost:3000
@@ -27,36 +27,6 @@ npm run dev
 
 3. **Open the application**:
 Visit [http://localhost:3000](http://localhost:3000) to access TaskFlow.
-
-## 🔧 Technology Stack
-
-- **Framework**: Next.js 14 with App Router
-- **Authentication**: Supabase Auth with Row Level Security
-- **Database**: PostgreSQL (via Supabase)
-- **Styling**: Tailwind CSS
-- **OAuth**: Custom OAuth 2.1 server implementation
-- **API**: Next.js API routes with Bearer token validation
-- **TypeScript**: Full type safety
-
-## 📱 Features
-
-- 🔐 **User Registration & Login** with Supabase Auth
-- ✅ **Task Management** - Create, edit, complete, delete tasks
-- 🔄 **Real-time Updates** - Live task synchronization
-- 🛡️ **OAuth Consent Flow** - Professional authorization interface
-- 🌐 **REST API** - Secure endpoints with scope validation
-- 📊 **Progress Tracking** - Task completion analytics
-- 🔒 **Row Level Security** - Database-level access control
-
-## 🔐 OAuth 2.1 Implementation
-
-TaskFlow implements a production-ready OAuth 2.1 authorization server with:
-
-- **Authorization Code Flow with PKCE** - Prevents code interception attacks
-- **State Parameter** - CSRF protection during authorization
-- **Scope Validation** - Fine-grained permission control (`profile:read`, `tasks:read`, `tasks:write`)
-- **Bearer Token Authentication** - Secure API access
-- **Token Expiry Handling** - Automatic cleanup and refresh
 
 ## 🛠️ Development
 
@@ -83,7 +53,7 @@ npm run lint         # Run ESLint
 
 ### Database Setup
 
-Run the SQL migration in `supabase/migration.sql` to set up the required tables and Row Level Security policies.
+Run the SQL migration in `supabase/migrations/001_tasks.sql` to set up the required tables and Row Level Security policies.
 
 ## 🌐 API Endpoints
 

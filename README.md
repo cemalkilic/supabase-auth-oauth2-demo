@@ -4,10 +4,7 @@ A complete Supabase OAuth 2.1 implementation demonstrating secure authorization 
 
 ## 🎥 Demo Video
 
-<video width="100%" controls>
-  <source src="./demo/supabase_oauth2_demo.mp4" type="video/mp4">
-  Your browser does not support the video tag. <a href="./demo/supabase_oauth2_demo.mp4">Download the demo video</a>
-</video>
+<video src="./demo/supabase_oauth2_demo.mp4" width="100%" controls></video>
 
 ## 🚨 **DEMO ONLY - NOT FOR PRODUCTION** 🚨
 

@@ -25,6 +25,25 @@ npm install
 ```
 
 2. **Set up Supabase**:
+
+   ### Option A: Local Development (Recommended)
+   
+   **Prerequisites**: Install the Supabase CLI following the [official installation guide](https://supabase.com/docs/guides/cli/getting-started#installing-the-supabase-cli).
+   
+   Run Supabase locally for easy development:
+   
+   ```bash
+   # Navigate to TaskFlow directory
+   cd apps/taskflow
+   
+   # Start local Supabase instance
+   supabase start
+   ```
+   
+   After running `supabase start`, copy the **API URL** and **publishable key** from the CLI output and use them in your environment variables.
+   
+   ### Option B: Cloud Supabase
+   
    - Create a new Supabase project at [supabase.com](https://supabase.com)
    - **Important**: Ensure your project is on auth version **v2.180.0** or above for OAuth 2.1 support
    - Run the database migration: copy/paste [`apps/taskflow/supabase/migrations/001_tasks.sql`](./apps/taskflow/supabase/migrations/001_tasks.sql) in SQL Editor
@@ -47,8 +66,6 @@ npm install
      ```
      
      **Important**: Save the `client_id` from the response - you'll need it for the FocusTime environment configuration.
-     
-   > **Coming Soon**: Local Supabase development support will be added to allow running this demo entirely offline with `supabase start`.
 
 3. **Configure environment variables**:
 ```bash

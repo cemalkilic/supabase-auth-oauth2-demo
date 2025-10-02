@@ -11,7 +11,6 @@ A Python application for the OAuth 2.1 demo project.
 
 1. **Create a virtual environment** (recommended):
 ```bash
-cd apps/taskflow-mcp-server
 python3 -m venv venv
 ```
 
@@ -33,6 +32,8 @@ cp .env.example .env
 ```
 
 Edit `.env` and replace `<ref>` with your Supabase project reference.
+If you're using the local supabase instance from this repo, you don't need any changes.
+Make sure Taskflow is also running and `TASKFLOW_API_URL` is configured correctly.
 
 4. **Install dependencies**:
 ```bash
@@ -65,20 +66,6 @@ The `.env.example` file contains the required environment variables. Copy it to 
 
 ```bash
 cp .env.example .env
-```
-
-To load environment variables in your Python code, use `python-dotenv`:
-```bash
-pip install python-dotenv
-```
-
-Then in your Python code:
-```python
-from dotenv import load_dotenv
-import os
-
-load_dotenv()
-auth_url = os.getenv('TASKFLOW_SUPABASE_AUTH_URL')
 ```
 
 ## Project Structure

@@ -70,13 +70,10 @@ export default function ConsentForm({ consentRequest }: ConsentFormProps) {
           </div>
           <div className="flex-1">
             <h3 className="font-semibold text-gray-900">{consentRequest.client.name}</h3>
-            {consentRequest.client.description && (
-              <p className="text-sm text-gray-600 mt-1">{consentRequest.client.description}</p>
-            )}
-            {consentRequest.client.website_url && (
-              <a 
-                href={consentRequest.client.website_url} 
-                target="_blank" 
+            {consentRequest.client.uri && (
+              <a
+                href={consentRequest.client.uri}
+                target="_blank"
                 rel="noopener noreferrer"
                 className="text-sm text-blue-600 hover:text-blue-700 mt-1 inline-block"
               >

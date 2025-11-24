@@ -83,20 +83,6 @@ export default function ConsentPageClient({ searchParams }: ConsentPageClientPro
           return
         }
 
-        // Check if authorization has expired
-        if (new Date() > new Date(consentData.expires_at)) {
-          setError('Authorization request has expired')
-          setLoading(false)
-          return
-        }
-
-        // Validate redirect_uri if provided
-        if (resolvedParams.redirect_uri && !consentData.client.redirect_uris.includes(resolvedParams.redirect_uri)) {
-          setError('Invalid redirect_uri')
-          setLoading(false)
-          return
-        }
-
         setConsentRequest(consentData)
         setLoading(false)
 

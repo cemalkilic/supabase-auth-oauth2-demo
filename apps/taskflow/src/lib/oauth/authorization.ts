@@ -1,62 +1,10 @@
 import { createClient } from '@/lib/supabase/client'
-import { config } from '@/lib/config'
-
-interface OAuthApiError {
-  error?: string
-  error_description?: string
-  message?: string
-}
-
-// Helper function to make OAuth API calls with proper error handling
-async function makeOAuthApiCall(
-  endpoint: string,
-  options: RequestInit = {}
-): Promise<any> {
-  const supabase = createClient()
-  const { data: sessionData, error: sessionError } = await supabase.auth.getSession()
-  
-  if (sessionError || !sessionData.session) {
-    throw new Error('Authentication required')
-  }
-
-  const response = await fetch(`${config.supabase.url}/auth/v1/${endpoint}`, {
-    ...options,
-    headers: {
-      'Authorization': `Bearer ${sessionData.session.access_token}`,
-      'Content-Type': 'application/json',
-      'apikey': config.supabase.anonKey,
-      ...options.headers
-    }
-  })
-
-  if (!response.ok) {
-    let errorData: OAuthApiError = {}
-    try {
-      errorData = await response.json()
-    } catch {
-      // JSON parsing failed, use status text
-      errorData = { error: response.statusText }
-    }
-
-    const errorMessage = errorData.error_description || 
-                        errorData.message || 
-                        errorData.error || 
-                        `OAuth API error: ${response.status}`
-
-    throw new Error(errorMessage)
-  }
-
-  return response.json()
-}
 
 export interface ClientApplication {
   id: string
   name: string
-  description?: string
-  redirect_uris: string[]
-  logo_url?: string
-  website_url?: string
-  created_at: string
+  uri: string
+  logo_uri: string
 }
 
 export interface ConsentRequest {
@@ -64,12 +12,12 @@ export interface ConsentRequest {
   client: ClientApplication
   scopes: string[]
   user_email: string
-  expires_at: string
+  redirect_url?: string
 }
 
 export async function fetchAuthorizationDetails(authorizationId: string): Promise<ConsentRequest | null> {
   const supabase = createClient()
-  
+
   // Check if user is authenticated
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
@@ -77,8 +25,14 @@ export async function fetchAuthorizationDetails(authorizationId: string): Promis
   }
 
   try {
-    // Call the Supabase Auth OAuth API endpoint
-    const authData = await makeOAuthApiCall(`oauth/authorizations/${authorizationId}`)
+    const { data: authData, error } = await supabase.auth.oauth.getAuthorizationDetails(authorizationId)
+    if (error) {
+      throw error
+    }
+
+    if (!authData) {
+      return null
+    }
 
     // Check if user already gave consent (API returns redirect_url directly)
     if (authData.redirect_url) {
@@ -91,39 +45,33 @@ export async function fetchAuthorizationDetails(authorizationId: string): Promis
     return {
       authorization_id: authorizationId,
       client: {
-        id: authData.client?.client_id,
-        name: authData.client?.client_name || 'OAuth Client',
-        description: authData.client?.description || '',
-        redirect_uris: authData.client?.redirect_uris,
-        logo_url: authData.client?.logo_uri || '/api/placeholder-logo',
-        website_url: authData.client?.client_uri || '',
-        created_at: authData.client?.created_at
+        id: authData.client.id,
+        name: authData.client.name,
+        uri: authData.client.uri,
+        logo_uri: authData.client.logo_uri
       },
       scopes: authData.scope ? authData.scope.split(' ') : [],
       user_email: authData.user?.email || user.email || '',
-      expires_at: authData.expires_at
+      redirect_url: authData.redirect_url
     }
   } catch (error) {
     console.error('Error fetching authorization details:', error)
-    
+
     // Handle 404 specifically - authorization not found
     if (error instanceof Error && error.message.includes('404')) {
       return null
     }
-    
+
     throw error
   }
 }
 
 export async function submitConsentDecision(
-  authorizationId: string, 
+  authorizationId: string,
   action: 'approve' | 'deny',
   consentRequest: ConsentRequest
 ): Promise<{ redirect_url: string }> {
-  console.log('submitConsentDecision called with:', { authorizationId, action, consentRequest })
-  
   const supabase = createClient()
-  
   // Check if user is authenticated
   const { data: { user } } = await supabase.auth.getUser()
   if (!user) {
@@ -131,21 +79,26 @@ export async function submitConsentDecision(
   }
 
   try {
-    // Call the Supabase Auth OAuth consent API endpoint
-    const responseData = await makeOAuthApiCall(`oauth/authorizations/${authorizationId}/consent`, {
-      method: 'POST',
-      body: JSON.stringify({
-        action: action
-      })
-    })
-    
-    console.log('OAuth API response:', responseData)
-    
-    // The API response already contains the redirect_url, so just return it
-    if (responseData.redirect_url) {
-      return { redirect_url: responseData.redirect_url }
+    // Use auth-js OAuth method to approve or deny authorization
+    let result
+
+    if (action === 'approve') {
+      const { data, error } = await supabase.auth.oauth.approveAuthorization(authorizationId)
+      result = { data, error }
+    } else {
+      const { data, error } = await supabase.auth.oauth.denyAuthorization(authorizationId)
+      result = { data, error }
     }
-    
+
+    if (result.error) {
+      throw result.error
+    }
+
+    // The API response contains the redirect_url
+    if (result.data?.redirect_url) {
+      return { redirect_url: result.data.redirect_url }
+    }
+
     throw new Error('No redirect URL found')
 
   } catch (error) {

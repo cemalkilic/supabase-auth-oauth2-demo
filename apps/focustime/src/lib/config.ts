@@ -9,7 +9,7 @@ export const config = {
   oauth: {
     clientId: import.meta.env.VITE_OAUTH_CLIENT_ID,
     redirectUri: `${import.meta.env.VITE_SITE_URL}/auth/callback`,
-    scopes: ['profile:read', 'tasks:read', 'tasks:write'],
+    scopes: [''],
   },
   app: {
     name: 'FocusTime',

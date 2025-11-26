@@ -4,7 +4,7 @@ A complete Supabase OAuth 2.1 implementation demonstrating secure authorization 
 
 ## 🎥 Demo Video
 
-<video src="./demo/supabase_oauth2_demo.mp4" width="100%" controls></video>
+https://github.com/user-attachments/assets/93821364-ac42-433c-8779-f6e4b6445b7e
 
 ## 🚨 **DEMO ONLY - NOT FOR PRODUCTION** 🚨
 

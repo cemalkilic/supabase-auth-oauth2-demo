@@ -34,10 +34,14 @@ export async function fetchAuthorizationDetails(authorizationId: string): Promis
       return null
     }
 
+    // Note: The runtime API returns 'redirect_url' but TypeScript types say 'redirect_uri'
+    // This is fixed in the latest version of the library, for now we cast to access the actual property
+    const authDataWithUrl = authData as typeof authData & { redirect_url?: string }
+
     // Check if user already gave consent (API returns redirect_url directly)
-    if (authData.redirect_url) {
+    if (authDataWithUrl.redirect_url) {
       // User already consented, redirect immediately
-      window.location.href = authData.redirect_url
+      window.location.href = authDataWithUrl.redirect_url
       return null
     }
 
@@ -52,7 +56,7 @@ export async function fetchAuthorizationDetails(authorizationId: string): Promis
       },
       scopes: authData.scope ? authData.scope.split(' ') : [],
       user_email: authData.user?.email || user.email || '',
-      redirect_url: authData.redirect_url
+      redirect_url: authDataWithUrl.redirect_url
     }
   } catch (error) {
     console.error('Error fetching authorization details:', error)

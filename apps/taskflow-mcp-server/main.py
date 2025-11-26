@@ -5,8 +5,7 @@ import uvicorn
 import httpx
 from dotenv import load_dotenv
 from fastmcp import FastMCP, Context
-from fastmcp.server.auth import RemoteAuthProvider
-from fastmcp.server.auth.providers.jwt import JWTVerifier
+from fastmcp.server.auth.providers.supabase import SupabaseProvider
 from fastmcp.server.dependencies import get_access_token, AccessToken
 from pydantic import AnyHttpUrl
 from starlette.middleware.cors import CORSMiddleware
@@ -25,34 +24,17 @@ logger = logging.getLogger(__name__)
 load_dotenv()
 
 # Get configuration from environment
-TASKFLOW_SUPABASE_AUTH_URL = os.getenv("TASKFLOW_SUPABASE_AUTH_URL", "http://127.0.0.1:54321/auth/v1")
+TASKFLOW_SUPABASE_PROJECT_URL = os.getenv("TASKFLOW_SUPABASE_PROJECT_URL", "http://127.0.0.1:54321/")
 TASKFLOW_API_URL = os.getenv("TASKFLOW_API_URL", "http://localhost:3000/api")
 
 MCP_SERVER_PORT = 3005
 
-# Extract the base Supabase URL and configure JWKS URI
-supabase_auth_base = TASKFLOW_SUPABASE_AUTH_URL.rstrip("/")
-jwks_uri = f"{supabase_auth_base}/.well-known/jwks.json"
-
-# Configure token validation for Supabase
-# IMPORTANT!! For the demo project, all authorization relies on RLS in the database.
-# Here, we just validate the token signature, expiry and `issuer` match.
-# Once the Supabase Auth supports for custom scopes, they can be also validated there.
-token_verifier = JWTVerifier(
-    jwks_uri=jwks_uri,
-    issuer=supabase_auth_base,
-    # depending on your supabase project's JWT settings
-    # https://supabase.com/dashboard/project/_/settings/jwt/signing-keys
-    # if you're using the local Supabase instance settings in this repo, it uses RS256
-    algorithm="RS256",
-)
-
-# Create the remote auth provider
-auth = RemoteAuthProvider(
-    token_verifier=token_verifier,
-    authorization_servers=[AnyHttpUrl(supabase_auth_base)],
+auth = SupabaseProvider(
+    project_url=TASKFLOW_SUPABASE_PROJECT_URL,
     base_url=f"http://localhost:{MCP_SERVER_PORT}",
+    algorithm="ES256",
 )
+
 mcp = FastMCP(name="TaskFlow MCP Server", auth=auth)
 
 @mcp.tool
@@ -126,7 +108,7 @@ async def get_tasks(ctx: Context) -> str:
 if __name__ == "__main__":
     logger.info("Starting TaskFlow MCP Server")
     logger.info(f"TASKFLOW_API_URL: {TASKFLOW_API_URL}")
-    logger.info(f"TASKFLOW_SUPABASE_AUTH_URL: {TASKFLOW_SUPABASE_AUTH_URL}")
+    logger.info(f"TASKFLOW_SUPABASE_PROJECT_URL: {TASKFLOW_SUPABASE_PROJECT_URL}")
 
     # Setup Starlette app with CORS for cross-origin requests
     app = mcp.http_app()
